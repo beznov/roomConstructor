@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    font-family: 'Montserrat';
+    color: #000;
+}
+
+[class*="__container"] {
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 80px;
+    background: rgb(255,254,254);
+    background: linear-gradient(90deg, rgba(255,254,254,1) 30%, rgba(148,205,233,1) 100%);
+}
+
+.header__border {
+    width: 100%;
+    height: 2px;
+    background: rgb(148,205,233);
+    background: linear-gradient(90deg, rgba(148,205,233,1) 0%, rgba(255,254,254,1) 70%);
+}
+
+.header__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.header__container > a {
+    font-weight: 600;
+    font-size: 30px;
+    transition: .3s;
+    color: #94cde9;
+    user-select: none;
+    display: flex;
+    align-items: center;
+}
+
+.header__container > a:hover {
+    color: #15b1ff;
+    transition: .3s;
+}
+
+.header__container > a img {
+    filter: brightness(0) saturate(100%) invert(74%) sepia(11%) saturate(371%) hue-rotate(163deg);
+}
+
+.header__container > a:hover img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(100%) saturate(230%) hue-rotate(170deg);
+}
+
+
+.header__container > a:hover img {
+    filter: brightness(0) saturate(100%) invert(50%) sepia(50%) hue-rotate(180deg) brightness(90%);
+    transition: 0.3s;
+}
+
+
+header ul {
+    display: flex;
+}
+
+header li:not(:first-child) {
+    margin-left: 20px;
+}
+
+header li a {
+    font-size: 20px;
+    font-weight: 500;
+    transition: .3s;
+    color: #ffffff;
+    user-select: none;
+}
+
+header li a:hover {
+    color: #ececec;
+    transition: .3s;
+}
+
+/* MAIN */
+
+.main__container__section {
+    width: 100%;
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.main__container__section__text {
+    display: flex;
+    flex-direction: column;
+    max-width: 50%;
+}
+
+.main__container__section__text:nth-child(odd) {
+    padding-right: 50px;
+}
+
+.main__container__section__text:nth-child(even) {
+    padding-left: 50px;
+    text-align: right;
+}
+
+.main__container__section__text span:first-child {
+    font-size: 30px;
+    font-weight: 500;
+    color: #15b1ff;
+}
+
+.main__container__section__text span:last-child {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #94cde9;
+}
+
+.main__container__section img {
+    max-width: 50%;
+    user-select: none;
+    box-shadow: 5px 5px 20px #15b1ff;
+}
+
+.main__container__section:nth-child(2) img {
+    max-width: 50%;
+    user-select: none;
+    box-shadow: -5px 5px 20px #15b1ff;
+}
+
+
+
+/* FOOTER */
+
+footer {
+    margin-top: 50px;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    background: rgb(255,254,254);
+    background: linear-gradient(90deg, rgba(255,254,254,1) 30%, rgba(148,205,233,1) 100%);
+}
+
+.footer__container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.footer__border {
+    width: 100%;
+    height: 2px;
+    background: rgb(148,205,233);
+    background: linear-gradient(90deg, rgba(148,205,233,1) 0%, rgba(255,254,254,1) 70%);
+}
+
+footer ul:first-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+footer ul:first-child li a {
+    font-size: 20px;
+    font-weight: 500;
+}
+footer ul:first-child li:nth-child(3) a,
+footer ul:first-child li:nth-child(1) a,
+footer ul:first-child li:nth-child(2) a{
+    color: #94cde9;
+    transition: .3s;
+}
+
+footer ul:first-child li:nth-child(3) a:hover,
+footer ul:first-child li:nth-child(1) a:hover,
+footer ul:first-child li:nth-child(2) a:hover {
+    color: #15b1ff;
+    transition: .3s;
+}
+
+
+
+footer ul:first-child li:nth-child(4) a,
+footer ul:first-child li:nth-child(5) a,
+footer ul:first-child li:nth-child(6) a {
+    color: #ffffff;
+    transition: .3s;
+}
+
+footer ul:first-child li:nth-child(4) a:hover,
+footer ul:first-child li:nth-child(5) a:hover,
+footer ul:first-child li:nth-child(6) a:hover {
+    color: #ececec;
+    transition: .3s;
+}
+
+footer ul:last-child {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+footer ul:last-child li a img {
+    width: 30px;
+}
+
+footer ul:last-child li:not(:first-child) {
+    margin-left: 10px;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/style/profile.css">
+    <link rel="icon" type="image/x-icon" href="/src/img/icon.webp">
+    <title>Room Constructor | Реєстрація</title>
+</head>
+<body>
+    <header>
+        <div class="header__container">
+            <a href="/"><img src="/src/img/icon.webp" alt="Icon" style="width: 30px; margin-right: 10px;"> Room Constructor</a>
+            <ul>
+                <li><a href="/constructor">Конструктор</a></li>
+                <li><a href="/profile">Профіль</a></li>
+                <li><a href="/signIn">Вхід</a></li>
+            </ul>
+        </div>
+        <div class="header__border"></div>
+    </header>
+
+    <main>
+        <div class="main__container">
+           <div class="main__container__head head">
+            <span>akksupper@gmail.com</span>
+            <button>Вийти</button>
+           </div>
+           <div class="main__container__spacer spacer"></div>
+           <div class="main__container__samples samples">
+            <span>Збережені кімнати</span>
+            
+            <div class="samples__sample sample">
+                <div class="sample__info">
+                    <span>Кімната кімната</span>
+                    <span>Дата збереження: 17.03.2025</span>
+                </div>
+                <div class="sample__actions">
+                    <form action="#" class="sample__actions__edit">
+                        <button type="submit"><img src="/src/img/edit.svg" alt="Edit"></button>
+                    </form>
+                    <form action="" class="sample__actions__delete">
+                        <button type="submit"><img src="/src/img/delete.svg" alt="Delete"></button>
+                    </form>
+                </div>
+            </div>
+
+            
+           </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer__border"></div>
+        <div class="footer__container">
+            <ul>
+                <li><a href="/">Головна сторінка</a></li>
+                <li><a href="/">Конструктор</a></li>
+                <li><a href="/">Профіль</a></li>
+                <li><a href="/">Вхід</a></li>
+                <li><a href="/">Десктоп застосунок</a></li>
+                <li><a href="/">FAQ</a></li>
+            </ul>
+            <ul>
+                <li><a href="/"><img src="/src/img/fb.svg" alt="Facebook"></a></li>
+                <li><a href="/"><img src="/src/img/inst.svg" alt="Instagram"></a></li>
+                <li><a href="/"><img src="/src/img/tiktok.svg" alt="TikTok"></a></li>
+            </ul>
+        </div>
+    </footer>
+    <script>
+        let form = document.getElementById('main__container__form_signUp');
+        let emailInput = document.getElementById('signUp__email');
+        let passwordInput = document.getElementById('signUp__password');
+        let passwordRepeatInput = document.getElementById('signUp__password_repeat');
+        const regexp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        emailInput.addEventListener('input', function() {
+            regexp.test(this.value) ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        });
+
+        passwordInput.addEventListener('input', function() {
+            this.value.length >= 8 ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        });
+
+        passwordRepeatInput.addEventListener('input', function() {
+            this.value === passwordInput.value ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        });
+
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            if (!regexp.test(emailInput.value)) isValid = false;
+            if (passwordInput.value.length < 8) isValid = false;
+
+            if (!isValid) e.preventDefault(); return;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/style/signUp.css">
+    <link rel="icon" type="image/x-icon" href="/src/img/icon.webp">
+    <title>Room Constructor | Реєстрація</title>
+</head>
+<body>
+    <header>
+        <div class="header__container">
+            <a href="/"><img src="/src/img/icon.webp" alt="Icon" style="width: 30px; margin-right: 10px;"> Room Constructor</a>
+            <ul>
+                <li><a href="/constructor">Конструктор</a></li>
+                <li><a href="/profile">Профіль</a></li>
+                <li><a href="/signIn">Вхід</a></li>
+            </ul>
+        </div>
+        <div class="header__border"></div>
+    </header>
+
+    <main>
+        <div class="main__container">
+           <form id="main__container__form_signUp" class="main__container__form_signUp signUp" action="#" method="post">
+                <label for="signUp__email">Пошта</label>
+                <input type="text" name="signUp__email" id="signUp__email">
+                <label for="signUp__password">Пароль</label>
+                <input type="password" name="signUp__password" id="signUp__password">
+                <label for="signUp__password_repeat">Повторіть пароль</label>
+                <input type="password" name="signUp__password_repeat" id="signUp__password_repeat">
+                <button type="submit">Створити обліковий запис</button>
+           </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer__border"></div>
+        <div class="footer__container">
+            <ul>
+                <li><a href="/">Головна сторінка</a></li>
+                <li><a href="/">Конструктор</a></li>
+                <li><a href="/">Профіль</a></li>
+                <li><a href="/">Вхід</a></li>
+                <li><a href="/">Десктоп застосунок</a></li>
+                <li><a href="/">FAQ</a></li>
+            </ul>
+            <ul>
+                <li><a href="/"><img src="fb.svg" alt="Facebook"></a></li>
+                <li><a href="/"><img src="inst.svg" alt="Instagram"></a></li>
+                <li><a href="/"><img src="tiktok.svg" alt="TikTok"></a></li>
+            </ul>
+        </div>
+    </footer>
+    <script>
+        let form = document.getElementById('main__container__form_signUp');
+        let emailInput = document.getElementById('signUp__email');
+        let passwordInput = document.getElementById('signUp__password');
+        let passwordRepeatInput = document.getElementById('signUp__password_repeat');
+        const regexp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        emailInput.addEventListener('input', function() {
+            regexp.test(this.value) ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        });
+
+        passwordInput.addEventListener('input', function() {
+            this.value.length >= 8 ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        });
+
+        passwordRepeatInput.addEventListener('input', function() {
+            this.value === passwordInput.value ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        });
+
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            if (!regexp.test(emailInput.value)) isValid = false;
+            if (passwordInput.value.length < 8) isValid = false;
+
+            if (!isValid) e.preventDefault(); return;
+        });
+    </script>
+</body>
+</html>

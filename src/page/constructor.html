@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejs.org/build/three.module.js",
+                "three/addons/": "https://threejs.org/examples/jsm/"
+            }
+        }</script>
+    <script src="/src/js/constructor.js" type="module"></script>
+    <link rel="icon" type="image/x-icon" href="/src/img/icon.webp">
+    <link rel="stylesheet" href="/src/style/constructor.css">
+    <title>Room Constructor | Конструктор</title>
+    
+</head>
+<body>
+    <header>
+        <div class="header__container">
+            <a href="/"><img src="/src/img/icon.webp" alt="Icon" style="width: 30px; margin-right: 10px;"> Room Constructor</a>
+            <ul>
+                <li><a href="/constructor">Конструктор</a></li>
+                <li><a href="/profile">Профіль</a></li>
+                <li><a href="/signIn">Вхід</a></li>
+            </ul>
+        </div>
+        <div class="header__border"></div>
+    </header>
+
+    <canvas id="canva"></canvas>
+    <div class="controls">
+        <div class="controls__initial controls__item">
+            <div class="controls__initial__item controls__item__inner" data-action="room" tabindex="1">
+                <img src="/src/img/cube.svg" alt="Room">
+                <span>Кімната</span>
+            </div>
+            <div class="controls__initial__item controls__item__inner" data-action="light" tabindex="2">
+                <img src="/src/img/light.svg" alt="Light" style="width: 70px;">
+                <span>Світло</span>
+            </div>
+            <div class="controls__initial__item controls__item__inner" data-action="object" tabindex="3">
+                <img src="/src/img/chair.svg" alt="Object" style="width: 70px;">
+                <span>Об'єкти</span>
+            </div>
+            <div class="controls__initial__item controls__item__inner" data-action="save" tabindex="4">
+                <img src="/src/img/save.svg" alt="Object" style="width: 70px;">
+                <span>Зберегти</span>
+            </div>
+        </div>
+        <div class="controls__room controls__item" style="display: none;">
+            <div class="controls__room__item controls__item__inner" data-action="walls" tabindex="1">
+                <img src="/src/img/wall.svg" alt="Walls" style="width: 70px;">
+                <span>Стіни</span>
+            </div>
+            <div class="controls__room__item controls__item__inner" data-action="windows" tabindex="2">
+                <img src="/src/img/window.svg" alt="Windows" style="width: 70px;">
+                <span>Вікна</span>
+            </div>
+            <div class="controls__room__item controls__item__inner" data-action="doors" tabindex="3">
+                <img src="/src/img/door.svg" alt="Doors">
+                <span>Двері</span>
+            </div>
+            <div class="controls__room__item controls__item__inner" data-action="textures" tabindex="4">
+                <img src="/src/img/door.svg" alt="Doors">
+                <span>Текстури</span>
+            </div>
+            <div class="controls__room__item controls__item__inner" data-action="back" tabindex="5">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        
+        <div class="controls__light controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__light__control control">
+                <button data-action="increaseLightY" style="position: absolute; transform: translate(0, -15px);"  tabindex="1"><img src="/src/img/increaseLightY.svg" alt="light y increase"></button>
+                <button data-action="increaseLightX" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/increaseLightX.svg" alt="light x increase"></button>
+                <button data-action="decreaseLightY" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/decreaseLightY.svg" alt="light y decrease"></button>
+                <button data-action="decreaseLightX" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/decreaseLightX.svg" alt="light X decrease"></button>
+            
+                <button data-action="decreaseLightZ" style="position: absolute; transform: translate(130px, -15px);" tabindex="5"><img src="/src/img/increaseLightY.svg" alt="light z decrease"></button>
+                <button data-action="increaseLightZ" style="position: absolute; transform: translate(130px, 45px);" tabindex="6"><img src="/src/img/decreaseLightY.svg" alt="light z increase"></button>
+
+                <button data-action="increaseLightIntensity" style="position: absolute; transform: translate(-130px, -15px);" tabindex="7"><img src="/src/img/lightGreen.svg" alt="light intensity increase"></button>
+                <button data-action="decreaseLightIntensity" style="position: absolute; transform: translate(-130px, 45px);" tabindex="8"><img src="/src/img/lightRed.svg" alt="light intensity decrease"></button>
+            </div>
+            <div class="controls__light__control__item controls__item__inner" data-action="back"  tabindex="9">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__object controls__item" style="display: none;">
+            <div class="controls__object__item controls__item__inner" data-action="addObject" tabindex="1">
+                <img src="/src/img/add.svg" alt="Add">
+                <span>Додати</span>
+            </div>
+            <div class="controls__object__item controls__item__inner" data-action="removeObject" tabindex="2">
+                <img src="/src/img/remove.svg" alt="Remove">
+                <span>Видалити</span>
+            </div>
+            <div class="controls__object__item controls__item__inner" data-action="objectDimensions" tabindex="3">
+                <img src="/src/img/expand.svg" alt="Expand">
+                <span>Розмір/положення</span>
+            </div>
+            <div class="controls__object__item controls__item__inner" data-action="back" tabindex="4">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__object__dm controls__buttons" style="display: none;">
+            
+        </div>
+
+        <div class="controls__save controls__item save" style="display: none; justify-content: space-between; align-items: center;">
+            <div>
+            </div>
+            <form action="#" method="post" id="save__form">
+                <input type="text" name="name" id="save__form__name" placeholder="Назва кімнати...">
+                <button type="submit">Зберегти</button>
+            </form>
+            <div class="controls__save__item controls__item__inner" data-action="back" tabindex="5">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__room__walls controls__item" style="display: none;">
+            <div class="controls__room__walls__item controls__item__inner" data-action="addWalls" tabindex="1">
+                <img src="/src/img/add.svg" alt="Add">
+                <span>Додати</span>
+            </div>
+            <div class="controls__room__walls__item controls__item__inner" data-action="removeWalls" tabindex="2">
+                <img src="/src/img/remove.svg" alt="Remove">
+                <span>Видалити</span>
+            </div>
+            <div class="controls__room__walls__item controls__item__inner" data-action="wallsDimensions" tabindex="3">
+                <img src="/src/img/expand.svg" alt="Expand">
+                <span>Ширина/Довжина</span>
+            </div>
+            <div class="controls__room__walls__item controls__item__inner" data-action="wallsHeight" tabindex="4">
+                <img src="/src/img/height.svg" alt="Height">
+                <span>Висота</span>
+            </div>
+            <div class="controls__room__walls__item controls__item__inner" data-action="back" tabindex="5">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__room__windows controls__item" style="display: none;">
+            <div class="controls__room__windows__item controls__item__inner" data-action="addWindows" tabindex="1">
+                <img src="/src/img/add.svg" alt="Add">
+                <span>Додати</span>
+            </div>
+            <div class="controls__room__windows__item controls__item__inner" data-action="removeWindows" tabindex="2">
+                <img src="/src/img/remove.svg" alt="Remove">
+                <span>Видалити</span>
+            </div>
+            <div class="controls__room__windows__item controls__item__inner" data-action="windowsDimensions" tabindex="3">
+                <img src="/src/img/expand.svg" alt="Expand">
+                <span>Розмір/положення</span>
+            </div>
+            <div class="controls__room__windows__item controls__item__inner" data-action="back" tabindex="4">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__room__doors controls__item" style="display: none;">
+            <div class="controls__room__doors__item controls__item__inner" data-action="addDoors" tabindex="1">
+                <img src="/src/img/add.svg" alt="Add">
+                <span>Додати</span>
+            </div>
+            <div class="controls__room__doors__item controls__item__inner" data-action="removeDoors" tabindex="2">
+                <img src="/src/img/remove.svg" alt="Remove">
+                <span>Видалити</span>
+            </div>
+            <div class="controls__room__doors__item controls__item__inner" data-action="doorsDimensions" tabindex="3">
+                <img src="/src/img/expand.svg" alt="Expand">
+                <span>Розмір/положення</span>
+            </div>
+            <div class="controls__room__doors__item controls__item__inner" data-action="back" tabindex="4">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__room__walls__wl controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__walls__wl__control control">
+                <button data-action="increaseLength" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="wall length increase"></button>
+                <button data-action="increaseWidth" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="wall width increase"></button>
+                <button data-action="decreaseLength" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="wall length decrease"></button>
+                <button data-action="decreaseWidth" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="wall width decrease"></button>
+            </div>
+            <div class="controls__room__walls__wl__item controls__item__inner" data-action="back" tabindex="5">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__room__walls__h controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__walls__h__control control">
+                <button data-action="increaseWallHeight" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="wall height increase"></button>
+                <button style="display: none;"></button>
+                <button data-action="decreaseWallHeight" style="position: absolute; transform: translate(0, 45px);" tabindex="2"><img src="/src/img/wallLengthDecrease.svg" alt="wall height decrease"></button>
+                
+            </div>
+            <div class="controls__room__walls__wl__item controls__item__inner" data-action="back" tabindex="3">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__room__windows__tune_left controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__windows__tune_left__control control">
+                <button data-action="increaseWindowHeightLeft" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="window height increase"></button>
+                <button data-action="increaseWindowWidthLeft" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="window width increase"></button>
+                <button data-action="decreaseWindowHeightLeft" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="window height decrease"></button>
+                <button data-action="decreaseWindowWidthLeft" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="window width decrease"></button>
+            
+                <button data-action="increaseWindowYLeft" style="position: absolute; transform: translate(130px, -15px);" tabindex="5"><img src="/src/img/increaseLightY.svg" alt="window y increase"></button>
+                <button data-action="decreaseWindowYLeft" style="position: absolute; transform: translate(130px, 45px);" tabindex="6"><img src="/src/img/decreaseLightY.svg" alt="window y decrease"></button>
+            </div>
+            <div class="controls__room__windows__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        <div class="controls__room__windows__tune_right controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__windows__tune_right__control control">
+                <button data-action="increaseWindowHeightRight" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="window height increase"></button>
+                <button data-action="increaseWindowWidthRight" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="window width increase"></button>
+                <button data-action="decreaseWindowHeightRight" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="window height decrease"></button>
+                <button data-action="decreaseWindowWidthRight" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="window width decrease"></button>
+            
+                <button data-action="increaseWindowYRight" style="position: absolute; transform: translate(130px, -15px);" tabindex="5"><img src="/src/img/increaseLightY.svg" alt="window y increase"></button>
+                <button data-action="decreaseWindowYRight" style="position: absolute; transform: translate(130px, 45px);" tabindex="6"><img src="/src/img/decreaseLightY.svg" alt="window y decrease"></button>
+            </div>
+            <div class="controls__room__windows__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        <div class="controls__room__windows__tune_back controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__windows__tune_back__control control">
+                <button data-action="increaseWindowHeightBack" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="window height increase"></button>
+                <button data-action="increaseWindowWidthBack" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="window width increase"></button>
+                <button data-action="decreaseWindowHeightBack" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="window height decrease"></button>
+                <button data-action="decreaseWindowWidthBack" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="window width decrease"></button>
+            
+                <button data-action="increaseWindowYBack" style="position: absolute; transform: translate(130px, -15px);" tabindex="5"><img src="/src/img/increaseLightY.svg" alt="window y increase"></button>
+                <button data-action="decreaseWindowYBack" style="position: absolute; transform: translate(130px, 45px);" tabindex="6"><img src="/src/img/decreaseLightY.svg" alt="window y decrease"></button>
+            </div>
+            <div class="controls__room__windows__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        <div class="controls__room__windows__tune_front controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__windows__tune_front__control control">
+                <button data-action="increaseWindowHeightFront" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="window height increase"></button>
+                <button data-action="increaseWindowWidthFront" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="window width increase"></button>
+                <button data-action="decreaseWindowHeightFront" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="window height decrease"></button>
+                <button data-action="decreaseWindowWidthFront" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="window width decrease"></button>
+            
+                <button data-action="increaseWindowYFront" style="position: absolute; transform: translate(130px, -15px);" tabindex="5"><img src="/src/img/increaseLightY.svg" alt="window y increase"></button>
+                <button data-action="decreaseWindowYFront" style="position: absolute; transform: translate(130px, 45px);" tabindex="6"><img src="/src/img/decreaseLightY.svg" alt="window y decrease"></button>
+            </div>
+            <div class="controls__room__windows__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+
+        <div class="controls__room__doors__tune_left controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__doors__tune_left__control control">
+                <button data-action="increaseDoorHeightLeft" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="door height increase"></button>
+                <button data-action="increaseDoorWidthLeft" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="door width increase"></button>
+                <button data-action="decreaseDoorHeightLeft" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="door height decrease"></button>
+                <button data-action="decreaseDoorWidthLeft" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="door width decrease"></button>
+            
+                <button data-action="decreaseDoorXLeft" style="position: absolute; transform: translate(130px, 10px); width: 50px; height: 60px; border-top-right-radius: 0; border-bottom-left-radius: 50px; border-top-left-radius: 50px;" tabindex="5"><img src="/src/img/decreaseLightX.svg" alt="door x decrease"></button>
+                <button data-action="increaseDoorXLeft" style="position: absolute; transform: translate(190px, 10px); width: 50px; height: 60px; border-bottom-right-radius: 50px; border-bottom-left-radius: 0; border-top-right-radius: 50px;" tabindex="6"><img src="/src/img/increaseLightX.svg" alt="door x increase"></button>
+            </div>
+            <div class="controls__room__doors__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        <div class="controls__room__doors__tune_right controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__doors__tune_right__control control">
+                <button data-action="increaseDoorHeightRight" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="door height increase"></button>
+                <button data-action="increaseDoorWidthRight" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="door width increase"></button>
+                <button data-action="decreaseDoorHeightRight" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="door height decrease"></button>
+                <button data-action="decreaseDoorWidthRight" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="door width decrease"></button>
+            
+                <button data-action="decreaseDoorXRight" style="position: absolute; transform: translate(130px, 10px); width: 50px; height: 60px; border-top-right-radius: 0; border-bottom-left-radius: 50px; border-top-left-radius: 50px;" tabindex="5"><img src="/src/img/decreaseLightX.svg" alt="door x decrease"></button>
+                <button data-action="increaseDoorXRight" style="position: absolute; transform: translate(190px, 10px); width: 50px; height: 60px; border-bottom-right-radius: 50px; border-bottom-left-radius: 0; border-top-right-radius: 50px;" tabindex="6"><img src="/src/img/increaseLightX.svg" alt="door x increase"></button>
+            </div>
+            <div class="controls__room__doors__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        <div class="controls__room__doors__tune_front controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__doors__tune_front__control control">
+                <button data-action="increaseDoorHeightFront" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="door height increase"></button>
+                <button data-action="increaseDoorWidthFront" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="door width increase"></button>
+                <button data-action="decreaseDoorHeightFront" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="door height decrease"></button>
+                <button data-action="decreaseDoorWidthFront" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="door width decrease"></button>
+            
+                <button data-action="decreaseDoorXFront" style="position: absolute; transform: translate(130px, 10px); width: 50px; height: 60px; border-top-right-radius: 0; border-bottom-left-radius: 50px; border-top-left-radius: 50px;" tabindex="5"><img src="/src/img/decreaseLightX.svg" alt="door x decrease"></button>
+                <button data-action="increaseDoorXFront" style="position: absolute; transform: translate(190px, 10px); width: 50px; height: 60px; border-bottom-right-radius: 50px; border-bottom-left-radius: 0; border-top-right-radius: 50px;" tabindex="6"><img src="/src/img/increaseLightX.svg" alt="door x increase"></button>
+            </div>
+            <div class="controls__room__doors__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+        <div class="controls__room__doors__tune_back controls__buttons" style="display: none;">
+            <div></div>
+            <div class="controls__room__doors__tune_back__control control">
+                <button data-action="increaseDoorHeightBack" style="position: absolute; transform: translate(0, -15px);" tabindex="1"><img src="/src/img/wallLengthIncrease.svg" alt="door height increase"></button>
+                <button data-action="increaseDoorWidthBack" style="position: absolute; transform: translate(65px, 10px);" tabindex="2"><img src="/src/img/wallWidthIncrease.svg" alt="door width increase"></button>
+                <button data-action="decreaseDoorHeightBack" style="position: absolute; transform: translate(0, 45px);" tabindex="3"><img src="/src/img/wallLengthDecrease.svg" alt="door height decrease"></button>
+                <button data-action="decreaseDoorWidthBack" style="position: absolute; transform: translate(-55px, 10px);" tabindex="4"><img src="/src/img/wallWidthDecrease.svg" alt="door width decrease"></button>
+            
+                <button data-action="decreaseDoorXBack" style="position: absolute; transform: translate(130px, 10px); width: 50px; height: 60px; border-top-right-radius: 0; border-bottom-left-radius: 50px; border-top-left-radius: 50px;" tabindex="5"><img src="/src/img/decreaseLightX.svg" alt="door x decrease"></button>
+                <button data-action="increaseDoorXBack" style="position: absolute; transform: translate(190px, 10px); width: 50px; height: 60px; border-bottom-right-radius: 50px; border-bottom-left-radius: 0; border-top-right-radius: 50px;" tabindex="6"><img src="/src/img/increaseLightX.svg" alt="door x increase"></button>
+            </div>
+            <div class="controls__room__doors__tune__item controls__item__inner" data-action="back" tabindex="7">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__textures controls__item" style="display: none;">
+            <div class="controls__textures__item controls__item__inner" data-action="addTexture" tabindex="1">
+                <img src="/src/img/add.svg" alt="Add">
+                <span>Додати</span>
+            </div>
+            <div class="controls__textures__item controls__item__inner" data-action="removeTexture" tabindex="2">
+                <img src="/src/img/remove.svg" alt="Remove">
+                <span>Видалити</span>
+            </div>
+            <div class="controls__textures__item controls__item__inner" data-action="back" tabindex="3">
+                <img src="/src/img/return.svg" alt="Return" style="width: 70px;">
+                <span>Назад</span>
+            </div>
+        </div>
+
+        <div class="controls__textures__add controls__item" style="display: none;">
+
+        </div>
+
+        <div class="controls__textures__remove controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__walls__add controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__walls__remove controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__windows__add controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__windows__remove controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__windows__dm controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__doors__add controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__doors__remove controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__room__doors__dm controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__object__add controls__item" style="display: none;">
+            
+        </div>
+
+        <div class="controls__object__remove controls__item" style="display: none;">
+            
+        </div>
+
+    </div>
+</body>
+</html>
