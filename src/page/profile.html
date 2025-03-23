@@ -12,9 +12,9 @@
         <div class="header__container">
             <a href="/"><img src="/src/img/icon.webp" alt="Icon" style="width: 30px; margin-right: 10px;"> Room Constructor</a>
             <ul>
+                <li><a id="header__container__signIn" href="/signIn" style="visibility: hidden;">Вхід</a></li>
                 <li><a href="/constructor">Конструктор</a></li>
                 <li><a href="/profile">Профіль</a></li>
-                <li><a href="/signIn">Вхід</a></li>
             </ul>
         </div>
         <div class="header__border"></div>
@@ -23,8 +23,8 @@
     <main>
         <div class="main__container">
            <div class="main__container__head head">
-            <span>akksupper@gmail.com</span>
-            <button>Вийти</button>
+            <span id="head__username"></span>
+            <button id="head__logout">Вийти</button>
            </div>
            <div class="main__container__spacer spacer"></div>
            <div class="main__container__samples samples">
@@ -69,32 +69,44 @@
         </div>
     </footer>
     <script>
-        let form = document.getElementById('main__container__form_signUp');
-        let emailInput = document.getElementById('signUp__email');
-        let passwordInput = document.getElementById('signUp__password');
-        let passwordRepeatInput = document.getElementById('signUp__password_repeat');
-        const regexp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-        emailInput.addEventListener('input', function() {
-            regexp.test(this.value) ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+    document.addEventListener("DOMContentLoaded", (event) => {
+        fetch('/username')
+            .then(res => res.json())
+            .then(data => {
+                if (data.username) {
+                    document.getElementById('head__username').innerText = data.username;
+                } else {
+                    document.getElementById('head__username').innerText = 'undefined';
+                }
         });
 
-        passwordInput.addEventListener('input', function() {
-            this.value.length >= 8 ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+        fetch('/authenticated')
+        .then(res => res.json())
+        .then(data => {
+            if (data.authenticated) {
+                document.getElementById('header__container__signIn').remove();
+            } else {
+                document.getElementById('header__container__signIn').style.visibility = "visible";
+            }
         });
+        
+        document.getElementById("head__logout").addEventListener("click", async () => {
+            try {
+                let response = await fetch("/logout", { method: "POST" });
+                let data = await response.json();
 
-        passwordRepeatInput.addEventListener('input', function() {
-            this.value === passwordInput.value ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
+                if (response.ok) {
+                    localStorage.removeItem("authToken");
+                    window.location.href = "/signIn";
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Помилка при виході:", error);
+            }
         });
-
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            
-            if (!regexp.test(emailInput.value)) isValid = false;
-            if (passwordInput.value.length < 8) isValid = false;
-
-            if (!isValid) e.preventDefault(); return;
-        });
+    });
     </script>
 </body>
 </html>

@@ -12,9 +12,9 @@
         <div class="header__container">
             <a href="/"><img src="/src/img/icon.webp" alt="Icon" style="width: 30px; margin-right: 10px;"> Room Constructor</a>
             <ul>
+                <li><a id="header__container__signIn" href="/signIn" style="visibility: hidden;">Вхід</a></li>
                 <li><a href="/constructor">Конструктор</a></li>
                 <li><a href="/profile">Профіль</a></li>
-                <li><a href="/signIn">Вхід</a></li>
             </ul>
         </div>
         <div class="header__border"></div>
@@ -65,4 +65,17 @@
         </div>
     </footer>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+        fetch('/authenticated')
+        .then(res => res.json())
+        .then(data => {
+            if (data.authenticated) {
+                document.getElementById('header__container__signIn').remove();
+            } else {
+                document.getElementById('header__container__signIn').style.visibility = "visible";
+            }
+        });
+    });
+</script>
 </html>

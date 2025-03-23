@@ -12,9 +12,9 @@
         <div class="header__container">
             <a href="/"><img src="/src/img/icon.webp" alt="Icon" style="width: 30px; margin-right: 10px;"> Room Constructor</a>
             <ul>
+                <li><a id="header__container__signIn" href="/signIn">Вхід</a></li>
                 <li><a href="/constructor">Конструктор</a></li>
                 <li><a href="/profile">Профіль</a></li>
-                <li><a href="/signIn">Вхід</a></li>
             </ul>
         </div>
         <div class="header__border"></div>
@@ -22,7 +22,7 @@
 
     <main>
         <div class="main__container">
-           <form id="main__container__form_signUp" class="main__container__form_signUp signUp" action="#" method="post">
+           <form id="main__container__form_signUp" class="main__container__form_signUp signUp">
                 <label for="signUp__email">Пошта</label>
                 <input type="text" name="signUp__email" id="signUp__email">
                 <label for="signUp__password">Пароль</label>
@@ -46,9 +46,9 @@
                 <li><a href="/">FAQ</a></li>
             </ul>
             <ul>
-                <li><a href="/"><img src="fb.svg" alt="Facebook"></a></li>
-                <li><a href="/"><img src="inst.svg" alt="Instagram"></a></li>
-                <li><a href="/"><img src="tiktok.svg" alt="TikTok"></a></li>
+                <li><a href="/"><img src="/src/img/fb.svg" alt="Facebook"></a></li>
+                <li><a href="/"><img src="/src/img/inst.svg" alt="Instagram"></a></li>
+                <li><a href="/"><img src="/src/img/tiktok.svg" alt="TikTok"></a></li>
             </ul>
         </div>
     </footer>
@@ -71,14 +71,51 @@
             this.value === passwordInput.value ? this.style.border = '2px solid #15b1ff' : this.style.border = '2px solid red';
         });
 
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            
-            if (!regexp.test(emailInput.value)) isValid = false;
-            if (passwordInput.value.length < 8) isValid = false;
+        form.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-            if (!isValid) e.preventDefault(); return;
-        });
+        let email = emailInput.value.trim();
+        let password = passwordInput.value.trim();
+        let passwordRepeat = passwordRepeatInput.value.trim();
+
+        if (!regexp.test(email)) {
+            alert("Некоректний email");
+            return;
+        }
+
+        if (password.length < 8) {
+            alert("Пароль має складатися мінімум з 8 значень");
+            return;
+        }
+
+        if (password !== passwordRepeat) {
+            alert("Паролі не співпадають");
+            return;
+        }
+
+        try {
+            let response = await fetch("/handleSignUp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    signUp__email: emailInput.value.trim(),
+                    signUp__password: passwordInput.value.trim(),
+                    signUp__password_repeat: passwordRepeatInput.value.trim()
+                }),
+            });
+
+            let data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("authToken", data.token);
+                window.location.href = "/";
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
     </script>
 </body>
 </html>

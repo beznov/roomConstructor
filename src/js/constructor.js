@@ -4,6 +4,20 @@ import * as THREE from 'three';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 window.onload = function() {
+
+    fetch('/authenticated')
+        .then(res => res.json())
+        .then(data => {
+            if (data.authenticated) {
+                document.getElementById('header__container__signIn').remove();
+                document.querySelector('[data-action="save"]').style.display = "flex";
+            } else {
+                document.getElementById('header__container__signIn').style.visibility = "visible";
+                document.querySelector('[data-action="save"]').remove();
+            }
+    });
+
+
     let canvas = document.getElementById('canva');
 
     let width = window.innerWidth;
