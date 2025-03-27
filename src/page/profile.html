@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/src/style/profile.css">
     <link rel="icon" type="image/x-icon" href="/src/img/icon.webp">
-    <title>Room Constructor | Реєстрація</title>
+    <title>Room Constructor | Профіль</title>
 </head>
 <body>
     <header>
@@ -30,20 +30,7 @@
            <div class="main__container__samples samples">
             <span>Збережені кімнати</span>
             
-            <div class="samples__sample sample">
-                <div class="sample__info">
-                    <span>Кімната кімната</span>
-                    <span>Дата збереження: 17.03.2025</span>
-                </div>
-                <div class="sample__actions">
-                    <form action="#" class="sample__actions__edit">
-                        <button type="submit"><img src="/src/img/edit.svg" alt="Edit"></button>
-                    </form>
-                    <form action="" class="sample__actions__delete">
-                        <button type="submit"><img src="/src/img/delete.svg" alt="Delete"></button>
-                    </form>
-                </div>
-            </div>
+            
 
             
            </div>
@@ -70,7 +57,7 @@
     </footer>
     <script>
 
-    document.addEventListener("DOMContentLoaded", (event) => {
+    document.addEventListener("DOMContentLoaded", async (event) => {
         fetch('/username')
             .then(res => res.json())
             .then(data => {
@@ -90,6 +77,67 @@
                 document.getElementById('header__container__signIn').style.visibility = "visible";
             }
         });
+
+        try {
+            let response = await fetch("/get-rooms");
+            let rooms = await response.json();
+
+            if (Array.isArray(rooms)) {
+                const container = document.querySelector(".main__container__samples");
+
+                rooms.forEach(room => {
+                    const roomElement = document.createElement("div");
+                    roomElement.classList.add("samples__sample", "sample");
+
+                    roomElement.innerHTML = `
+                        <div class="sample__info">
+                            <span>${room.room_name}</span>
+                            <span>Дата збереження: ${new Date(room.datetime).toLocaleDateString()}</span>
+                        </div>
+                        <div class="sample__actions">
+                            <a href="/constructor?id=${room.r_id}" class="sample__actions__edit">
+                                <img src="/src/img/edit.svg" alt="Edit">
+                            </a>
+                            <form class="sample__actions__delete">
+                                <input type="hidden" name="room" value="${room.r_id}">
+                                <button type="submit"><img src="/src/img/delete.svg" alt="Delete"></button>
+                            </form>
+                        </div>
+                    `;
+                    container.appendChild(roomElement);
+                });
+
+                const deleteForms = document.querySelectorAll('.sample__actions__delete');
+                deleteForms.forEach(form => {
+                    form.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+
+                        const roomId = form.querySelector('input[name="room"]').value;
+
+                        try {
+                            const deleteResponse = await fetch('/delete-room', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ roomId }),
+                            });
+
+                            if (deleteResponse.ok) {
+                                const roomElement = form.closest('.sample');
+                                roomElement.remove();
+                            } else {
+                                console.error('Помилка при видаленні кімнати');
+                            }
+                        } catch (error) {
+                            console.error('Помилка при запиті на видалення:', error);
+                        }
+                    });
+                });
+            }
+        } catch (error) {
+            console.error("Помилка при отриманні кімнат:", error);
+        }
         
         document.getElementById("head__logout").addEventListener("click", async () => {
             try {

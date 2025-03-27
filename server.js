@@ -4,18 +4,24 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const session = require("express-session");
+const bodyParser = require('body-parser');
+const compression = require('compression');
+const pako = require('pako');
 
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(compression());
 app.use(express.static(path.join(__dirname)));
 app.use('/src', express.static(path.join(__dirname, 'src')));
 app.use('/object', express.static(path.join(__dirname, 'src', 'object')));
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(bodyParser.json({limit: "100mb"}));
+app.use(bodyParser.urlencoded({limit: "100mb", extended: true, parameterLimit:500000}));
+
 
 app.use(
     session({
@@ -179,3 +185,116 @@ app.get('/username', (req, res) => {
     res.json({ username: 'undefined' });
 });
 
+app.post('/save-room', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: "Користувач не авторизований" });
+    }
+    
+    const userId = req.session.user.id;
+    console.log("Получены данные:", req.body.data?.length, "байт");
+
+    if (!req.body.data) {
+        return res.status(400).json({ message: "Дані не отримані" });
+    }
+
+
+        try {
+            const base64Data = req.body.data;
+        
+            const compressedData = Buffer.from(base64Data, 'base64');
+
+            const decompressedData = pako.ungzip(compressedData, { to: 'string' });
+
+            const data = JSON.parse(decompressedData);
+           
+            const {
+                roomName, wallWidth, wallHeight, wallLength, wallThickness,
+                presentedWalls, objects, lights, lightX, lightY, lightZ, lightIntensity
+            } = data;
+
+            const query = `INSERT INTO saved_room (user, wall_width, wall_length, wall_height, wall_thickness, presented_walls, objects,
+            lights, light_x, light_y, light_z, light_intensity, room_name, environment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        
+            db.query(query, [userId, data.wallWidth, data.wallLength, data.wallHeight, data.wallThickness, 
+                JSON.stringify(data.presentedWalls), JSON.stringify(data.objects), JSON.stringify(data.lights), 
+                data.lightX, data.lightY, data.lightZ, data.lightIntensity, data.roomName, 'web'], (err, result) => {
+                if (err) {
+                    console.error("Ошибка MySQL:", err);
+                    return res.status(500).json({ message: "Помилка при збереженні", error: err.toString() });
+                }
+                res.status(201).json({ message: "Кімнату успішно збережено" });
+            });
+        } catch (err) {
+            console.error("Ошибка распаковки:", err);
+            return res.status(500).json({ message: "Помилка при розпаковці даних", error: err.toString() });
+        }
+
+});
+
+
+
+app.get('/get-rooms', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: "Користувач не авторизований" });
+    }
+
+    const userId = req.session.user.id;
+    const query = "SELECT r_id, room_name, datetime FROM saved_room WHERE user = ? ORDER BY datetime DESC";
+
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: "Помилка при отриманні кімнат", error: err });
+        }
+        res.json(results);
+    });
+});
+
+
+app.get('/get-room', (req, res) => {
+    const { id } = req.query;
+
+    if (!req.session.user) {
+        res.status(403).send('Не достатньо прав');
+        return;
+    }
+
+    db.query('SELECT * FROM saved_room WHERE r_id = ?', [id], (err, result) => {
+        if (err) {
+            res.status(500).json({ error: 'Database error' });
+            return;
+        }
+
+        if (result.length === 0) {
+            res.status(404).json({ error: 'Object not found' });
+            return;
+        }
+
+        if (result[0].user !== req.session.user.id) {
+            res.status(403).send('Не достатньо прав');
+            return;
+        }
+
+        res.json(result[0]);
+    });
+});
+
+
+app.post('/delete-room', (req, res) => {
+    const roomId = req.body.roomId;
+    const query = 'DELETE FROM saved_room WHERE r_id = ?';
+
+    db.query(query, [roomId], (err, result) => {
+        if (err) {
+            console.error('Помилка при видаленні кімнати:', err);
+            res.status(500).json({ message: 'Помилка сервера' });
+            return;
+        }
+
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Кімната видалена' });
+        } else {
+            res.status(404).json({ message: 'Кімната не знайдена' });
+        }
+    });
+
+});

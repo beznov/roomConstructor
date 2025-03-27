@@ -12,7 +12,7 @@ class Room {
         wallThickness = 20,
         material = new THREE.MeshStandardMaterial({ color: 0x999999, side: THREE.DoubleSide }),
         presentedWalls = {},
-        objects = {},
+        obj = {},
         lights = [],
         lightX = 0,
         lightY = 500,
@@ -99,7 +99,6 @@ class Room {
                 positionZ: 0,
                 angle: 0,
                 loadedObject: null,
-                ...objects.tableAndChairs
             },
             woodenTable: {
                 name: 'Дерев\'яний стілець',
@@ -112,7 +111,6 @@ class Room {
                 positionZ: 0,
                 angle: 0,
                 loadedObject: null,
-                ...objects.woodenTable
             },
             tvStand: {
                 name: 'Тумба під телевізор',
@@ -125,7 +123,6 @@ class Room {
                 positionZ: 0,
                 angle: 135,
                 loadedObject: null,
-                ...objects.tvStand
             },
             chair: {
                 name: 'Крісло',
@@ -138,7 +135,6 @@ class Room {
                 positionZ: 0,
                 angle: 0,
                 loadedObject: null,
-                ...objects.chair
             },
             drawer: {
                 name: 'Тумба',
@@ -151,7 +147,6 @@ class Room {
                 positionZ: 0,
                 angle: 0,
                 loadedObject: null,
-                ...objects.drawer
             },
             bed: {
                 name: 'Ліжко',
@@ -164,7 +159,6 @@ class Room {
                 positionZ: 0,
                 angle: 0,
                 loadedObject: null,
-                ...objects.bed
             },
             tv: {
                 name: 'Телевізор',
@@ -177,7 +171,71 @@ class Room {
                 positionZ: 0,
                 angle: 0,
                 loadedObject: null,
-                ...objects.tv
+            }
+        };
+        this.objectsToDB = {
+            tableAndChairs: {
+                scale: 2.5,
+                positionX: 0,
+                positionY: -190,
+                positionZ: 0,
+                angle: 0,
+                isPresented: false,
+                ...obj.tableAndChairs
+            },
+            woodenTable: {
+                scale: 1,
+                positionX: 0,
+                positionY: -150,
+                positionZ: 0,
+                angle: 0,
+                isPresented: false,
+                ...obj.woodenTable
+            },
+            tvStand: {
+                scale: 10,
+                positionX: 300,
+                positionY: -190,
+                positionZ: 0,
+                angle: 135,
+                isPresented: false,
+                ...obj.tvStand
+            },
+            chair: {
+                scale: 0.2,
+                positionX: 0,
+                positionY: -190,
+                positionZ: 0,
+                angle: 0,
+                isPresented: false,
+                ...obj.chair
+            },
+            drawer: {
+                scale: 40,
+                positionX: 0,
+                positionY: -190,
+                positionZ: 0,
+                angle: 0,
+                isPresented: false,
+                ...obj.drawer
+            },
+            bed: {
+                scale: 110,
+                positionX: 0,
+                positionY: -190,
+                positionZ: 0,
+                angle: 0,
+                isPresented: false,
+                ...obj.bed
+            },
+            tv: {
+                scale: 100,
+                positionX: 0,
+                positionY: -190,
+                positionZ: 0,
+                angle: 0,
+                isPresented: false,
+                ...obj.tv
             }
         };
         this.textures = {
@@ -251,6 +309,7 @@ class Room {
     
                     this.scene.add(object);
                     obj.loadedObject = object;
+                    this.objectsToDB[objectKey].isPresented = true;
                 }, undefined, (error) => {
                     console.error(`Error loading object ${objectKey}:`, error);
                 });
@@ -268,6 +327,7 @@ class Room {
         const obj = this.objects[objectKey];
         if (obj.loadedObject && this.scene.getObjectById(obj.loadedObject.id)) {
             this.scene.remove(obj.loadedObject);
+            this.objectsToDB[objectKey].isPresented = false;
         }
         obj.loadedObject = null;
     }
@@ -280,6 +340,7 @@ class Room {
         const obj = this.objects[objectKey];
         if (obj.loadedObject) {
             obj.scale += scale;
+            this.objectsToDB[objectKey].scale = obj.scale;
             obj.loadedObject.scale.set(obj.scale, obj.scale, obj.scale);
         }
     }
@@ -295,6 +356,9 @@ class Room {
             obj.positionX += positionX;
             obj.positionY += positionY;
             obj.positionZ += positionZ;
+            this.objectsToDB[objectKey].positionX = obj.positionX;
+            this.objectsToDB[objectKey].positionY = obj.positionY;
+            this.objectsToDB[objectKey].positionZ = obj.positionZ;
             obj.loadedObject.position.set(obj.positionX, obj.positionY, obj.positionZ);
         }
     }
@@ -307,6 +371,7 @@ class Room {
         const obj = this.objects[objectKey];
         if (obj.loadedObject) {
             obj.angle += angle;
+            this.objectsToDB[objectKey].angle = obj.angle;
             obj.loadedObject.rotation.y = THREE.MathUtils.degToRad(obj.angle);
         }
     }
@@ -327,6 +392,22 @@ class Room {
         this.createWalls();
         this.createLighting(this.lightX, this.lightY, this.lightZ, this.lightIntensity);
         
+        const presentedObjects = Object.entries(this.objectsToDB)
+        .filter(([key, value]) => value.isPresented === true)
+        .map(([key, value]) => ({ [key]: value }));
+
+        if(presentedObjects) {
+            presentedObjects.forEach(obj => {
+                for (let key in obj) {
+                    this.objects[key].scale = obj[key].scale;
+                    this.objects[key].positionX = obj[key].positionX;
+                    this.objects[key].positionY = obj[key].positionY;
+                    this.objects[key].positionZ = obj[key].positionZ;
+                    this.objects[key].angle = obj[key].angle;
+                    this.loadObject(key);
+                }
+            });
+        }
     }
 
     createWalls() {
